@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Christian Lagemann</title>
+<meta name="description" content="Christian Lagemann: machine learning for dynamical systems. Reinforcement learning for control (HydroGym, Nature 2026 cover), learning dynamics and causal structure from sparse data, and the mathematics of when to trust learned models.">
+<meta property="og:title" content="Christian Lagemann">
+<meta property="og:description" content="Teaching machines to act in the physical world: learned control, learned dynamics, and when to trust them.">
+<meta property="og:image" content="https://cl126162.github.io/img/wing_render.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a white page where the flow renders float freely (they are rendered on white),
+   one 1120px column, text on the left and the flows on the right. Navy and gold
+   are the colours of the application documents (CV, letters), so the site matches them. */
+:root {
+  --paper: #ffffff;
+  --ink: #303848;          /* navy, same as the CV */
+  --ink-soft: #5b6273;
+  --ink-faint: #8a90a0;
+  --gold: #bf9268;         /* gold, same as the CV */
+  --gold-deep: #9a6f47;    /* gold for text, readable on white */
+  --wash: #f3f4f7;         /* navysoft */
+  --line: #e3e5eb;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wrap: 1120px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 17px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+img, video { max-width: 100%; display: block; }
+a { color: inherit; text-decoration-color: var(--gold); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--gold-deep); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: 24px; }
+@media (max-width: 480px) { .wrap { padding-inline: 18px; } }
+
+/* ---------- top bar ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid transparent; transition: border-color .2s; }
+.top.scrolled { border-bottom-color: var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { font: 500 19px/1 var(--serif); text-decoration: none; letter-spacing: .01em; }
+.nav { display: flex; gap: 22px; font-size: 14.5px; }
+.nav a { text-decoration: none; color: var(--ink-soft); }
+.nav a:hover { color: var(--ink); }
+@media (max-width: 720px) { .nav { display: none; } }
+
+/* ---------- type ---------- */
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; text-wrap: balance; margin: 0; }
+.eyebrow { font: 500 12.5px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold-deep); }
+.lede { font-size: 19px; color: var(--ink-soft); max-width: 34em; }
+p { margin: 0; }
+.prose { display: grid; gap: 1em; max-width: 38em; }
+.small { font-size: 14.5px; color: var(--ink-soft); }
+.mono { font-family: var(--mono); font-size: .9em; }
+
+section { padding-block: 88px; }
+section + section { border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 12px; margin-bottom: 44px; max-width: 46em; }
+.sec-head h2 { font-size: clamp(30px, 4vw, 42px); line-height: 1.12; }
+@media (max-width: 640px) { section { padding-block: 60px; } .sec-head { margin-bottom: 32px; } }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 56px 72px; border-top: 0; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 40px; align-items: center; }
+.hero h1 { font-size: clamp(38px, 5.4vw, 62px); line-height: 1.04; letter-spacing: -.015em; margin-block: 18px 22px; }
+.hero h1 em { font-style: italic; color: var(--gold-deep); }
+.hero-flow { position: relative; }
+.hero-flow video, .hero-flow img { width: 100%; mix-blend-mode: multiply; }
+.hero-flow figcaption { margin-top: 6px; text-align: right; }
+.links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 28px; font-size: 15px; }
+.links a { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); }
+.links a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.links a:hover { color: var(--gold-deep); }
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 12px; }
+  .hero-flow { order: -1; margin-inline: -8px; }
+}
+
+/* cover strip */
+.covers { display: grid; grid-template-columns: repeat(3, minmax(0, 200px)); gap: 22px 56px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
+.covers .label { grid-column: 1 / -1; }
+.cover { display: grid; gap: 14px; align-content: start; text-decoration: none; min-width: 0; }
+.cover img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; box-shadow: 0 1px 2px rgba(48,56,72,.18), 0 14px 30px -14px rgba(48,56,72,.5); transition: transform .25s ease; }
+.cover:hover img { transform: translateY(-4px) rotate(-1deg); }
+.cover span { display: grid; font-size: 14px; line-height: 1.35; color: var(--ink-soft); }
+.cover b { font: italic 400 17px/1.3 var(--serif); color: var(--ink); }
+@media (max-width: 640px) { .covers { gap: 18px 16px; } .cover span { font-size: 12.5px; } .cover b { font-size: 15px; } }
+
+/* ---------- video players (click to load) ---------- */
+.player { position: relative; aspect-ratio: 16 / 9; width: 100%; background: var(--ink); border-radius: 6px; overflow: hidden; }
+.player button { all: unset; cursor: pointer; position: absolute; inset: 0; display: block; }
+.player button img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease, filter .3s; }
+.player button:hover img { transform: scale(1.02); filter: brightness(.92); }
+.player button:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+.play { position: absolute; left: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px 9px 12px; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--ink); font: 500 14px/1.2 var(--sans); max-width: calc(100% - 36px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 6px 20px -8px rgba(0,0,0,.5); }
+.play::before { flex: none; content: ""; width: 0; height: 0; border-left: 11px solid var(--ink); border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 4px; }
+.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---------- feature: HydroGym ---------- */
+.feature { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+.feature .text { display: grid; gap: 18px; }
+.feature h3 { font-size: 26px; line-height: 1.2; }
+.result { border-left: 2px solid var(--gold); padding-left: 16px; font: 400 21px/1.4 var(--serif); }
+.meta { font-size: 14.5px; color: var(--ink-soft); }
+@media (max-width: 900px) { .feature { grid-template-columns: 1fr; gap: 28px; } }
+
+.envs { margin-top: 56px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px 14px; }
+.env { display: grid; gap: 6px; margin: 0; }
+.env video { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; mix-blend-mode: multiply; }
+.env video.square { mix-blend-mode: normal; }  /* square clip: full height of the 16:10 frame, empty space left and right */
+.env figcaption { font: 400 12.5px/1.3 var(--mono); color: var(--ink-soft); text-align: center; }
+.envs-note { grid-column: 1 / -1; margin-top: 4px; }
+@media (max-width: 900px) { .envs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .envs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- two more stories ---------- */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
+.story { display: grid; gap: 16px; align-content: start; }
+.pair + .pair { margin-top: 72px; }
+.story h3 { font-size: 24px; line-height: 1.22; }
+@media (max-width: 820px) { .pair { grid-template-columns: 1fr; gap: 56px; } .pair + .pair { margin-top: 56px; } }
+/* paper figures: same frame and chip as the video players, opens the full-size image */
+.figframe { position: relative; display: block; aspect-ratio: 16 / 9; max-width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; padding: 14px; cursor: zoom-in; }
+.figframe img { width: 100%; height: 100%; object-fit: contain; transition: transform .5s ease; }
+.figframe:hover img { transform: scale(1.02); }
+.figframe .play { left: 12px; bottom: 12px; padding: 7px 13px; font-size: 13px; background: rgba(48,56,72,.9); color: #fff; opacity: 0; transition: opacity .2s; }
+.figframe:hover .play, .figframe:focus-visible .play { opacity: 1; }
+.figframe .play::before { display: none; }
+
+/* ---------- research questions ---------- */
+.thrusts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.thrust { display: grid; gap: 14px; align-content: start; padding: 26px 26px 6px 0; }
+.thrust + .thrust { padding-left: 26px; border-left: 1px solid var(--line); }
+.thrust .tag { font: 500 12.5px/1 var(--mono); letter-spacing: .14em; color: var(--gold-deep); }
+.thrust h3 { font-size: 23px; line-height: 1.25; }
+.thrust p { font-size: 16px; color: var(--ink-soft); }
+.thrust ul { list-style: none; margin: 4px 0 0; padding: 12px 0 0; border-top: 1px dashed var(--line); display: grid; gap: 6px; font-size: 14px; }
+.thrust li { display: flex; justify-content: space-between; gap: 12px; }
+.thrust li span:last-child { color: var(--ink-faint); white-space: nowrap; font-family: var(--mono); font-size: 12.5px; padding-top: 2px; }
+@media (max-width: 900px) {
+  .thrusts { grid-template-columns: 1fr; }
+  .thrust, .thrust + .thrust { padding: 26px 0 10px; border-left: 0; }
+  .thrust + .thrust { border-top: 1px solid var(--line); }
+}
+.wing { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.wing img { width: 100%; mix-blend-mode: multiply; }
+.wing blockquote { margin: 0; font: italic 400 24px/1.38 var(--serif); }
+.wing blockquote + p { margin-top: 14px; }
+@media (max-width: 820px) { .wing { grid-template-columns: 1fr; gap: 20px; } }
+
+/* ---------- about ---------- */
+.about { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 56px; align-items: start; }
+.portrait-fig { margin: 0; }
+.portrait { width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: 6px; background: var(--wash); object-fit: cover; }
+.about .prose { font-size: 18px; }
+.about .prose p:first-child::first-letter { font: 400 3.1em/0.85 var(--serif); float: left; padding: 6px 10px 0 0; color: var(--ink); }
+@media (max-width: 760px) { .about { grid-template-columns: 1fr; gap: 28px; } .portrait-fig { max-width: 220px; } }
+
+/* path: logo, years, place, role, then the research focus of that period */
+.path { margin-top: 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); position: relative; }
+.path::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: var(--ink); }
+.stop { position: relative; display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 0; align-content: start; padding: 30px 22px 0 0; min-width: 0; }
+.stop::before { content: ""; position: absolute; top: 0; left: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
+.stop.now::before { background: var(--gold); border-color: var(--gold); }
+.stop .logo { height: 50px; display: flex; align-items: center; margin-bottom: 14px; }
+.stop .logo img { height: 34px; width: auto; max-width: 100%; }
+.stop .logo img.uw { height: 44px; }
+.stop .logo img.dzne { height: 50px; }
+.stop .yrs { font: 500 13px/1.2 var(--mono); color: var(--gold-deep); }
+.stop b { font: 500 20px/1.25 var(--serif); margin-top: 6px; }
+.stop .role { font-size: 14.5px; line-height: 1.45; color: var(--ink-soft); margin-top: 4px; }
+.stop .focus { align-self: start; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font: italic 400 16.5px/1.4 var(--serif); color: var(--ink); }
+.stop .focus::before { content: "Focus"; display: block; margin-bottom: 4px; font: normal 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+@media (max-width: 760px) {
+  .path { grid-template-columns: 1fr; gap: 36px; padding-left: 26px; }
+  .path::before { left: 5px; right: auto; top: 6px; bottom: 6px; width: 2px; height: auto; }
+  .path { grid-template-rows: none; }
+  .stop { padding: 0; grid-row: auto; grid-template-rows: none; }
+  .stop::before { left: -26px; top: 4px; }
+  .stop .logo { height: 44px; margin-bottom: 10px; }
+}
+
+/* ---------- papers ---------- */
+.papers { list-style: none; margin: 0; padding: 0; display: grid; }
+.paper { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 22px; align-items: center; padding-block: 18px; border-top: 1px solid var(--line); }
+.paper:last-child { border-bottom: 1px solid var(--line); }
+.paper .yr { font: 500 14px/1 var(--mono); color: var(--ink-faint); }
+.paper .t { display: grid; gap: 3px; min-width: 0; }
+.paper .t a, .paper .t > span:first-child { font: 400 19px/1.3 var(--serif); text-decoration: none; }
+.paper .t a:hover { text-decoration: underline; text-decoration-color: var(--gold); }
+.paper .v { font-size: 14.5px; color: var(--ink-soft); }
+.paper .v i { color: var(--ink); }
+.paper .badge { font: 500 11.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--gold-deep); border: 1px solid var(--gold); border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+@media (max-width: 640px) { .paper { grid-template-columns: 1fr; gap: 6px; } .paper .badge { justify-self: start; } }
+
+/* ---------- teaching & code ---------- */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px; }
+@media (max-width: 820px) { .two { grid-template-columns: 1fr; gap: 48px; } }
+.facts { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; }
+.facts li { display: grid; grid-template-columns: 7.2em minmax(0, 1fr); gap: 14px; font-size: 16px; }
+.facts li b { font: 500 13px/1.6 var(--mono); color: var(--gold-deep); font-weight: 500; }
+.code { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 0; }
+.code li { border-top: 1px solid var(--line); }
+.code li:last-child { border-bottom: 1px solid var(--line); }
+.code a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; padding-block: 13px; text-decoration: none; }
+.code a b { font-weight: 500; }
+.code a span { color: var(--ink-soft); font-size: 15px; }
+.code a i { font: normal 400 13px/1.7 var(--mono); color: var(--ink-faint); }
+.code a:hover b { color: var(--gold-deep); }
+
+/* ---------- contact ---------- */
+.contact { background: var(--ink); color: #f3f4f7; border-top: 0; }
+.contact .eyebrow { color: var(--gold); }
+.contact h2 { font-size: clamp(32px, 4.6vw, 52px); line-height: 1.1; margin-block: 14px 26px; }
+.contact a { color: #ffffff; }
+.contact a:hover { color: var(--gold); }
+.contact .mail { font: 400 clamp(20px, 3vw, 28px)/1.3 var(--serif); text-decoration-color: var(--gold); overflow-wrap: anywhere; }
+.contact .row { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 30px; font-size: 15px; }
+.contact .row a { text-decoration: none; border-bottom: 1px solid rgba(191,146,104,.6); padding-bottom: 2px; }
+footer { background: var(--ink); color: #9aa1b2; font-size: 13px; }
+footer .wrap { padding-block: 22px 34px; border-top: 1px solid rgba(255,255,255,.1); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+footer a { color: inherit; }
+</style>
+</head>
+<body>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#">Christian Lagemann</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#research">Research</a>
+      <a href="#hydrogym">HydroGym</a>
+      <a href="#about">About</a>
+      <a href="#papers">Papers</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Machine learning for physical systems</p>
+        <h1>Teaching machines to <em>act in the physical world</em>.</h1>
+        <p class="lede">I develop machine learning for dynamical systems: reinforcement learning agents that learn to control them, models that learn their dynamics and causal structure from sparse, noisy data, and the mathematics that tells us when to trust either. My test cases range from turbulent flows to the progression of ALS.</p>
+        <div class="links">
+          <a class="js-mail" href="#contact">Email me</a>
+          <a href="https://scholar.google.com/citations?user=6BgfQAgAAAAJ">Google Scholar</a>
+          <a href="https://github.com/cl126162">GitHub</a>
+          <a href="https://github.com/dynamicslab/hydrogym">HydroGym</a>
+        </div>
+      </div>
+      <figure class="hero-flow" style="margin:0">
+        <video class="loop" muted loop playsinline preload="auto" poster="media/tbl.jpg" aria-label="Animation of a turbulent boundary layer from HydroGym, with vortical structures coloured by velocity">
+          <source src="media/tbl.mp4" type="video/mp4">
+        </video>
+        <figcaption class="small mono">Turbulent boundary layer, one of 60+ HydroGym control environments</figcaption>
+      </figure>
+    </div>
+
+    <div class="covers">
+      <p class="eyebrow label">Cover articles</p>
+      <a class="cover" href="https://doi.org/10.1038/s41586-026-10917-6">
+        <img src="img/cover_nature.jpg" alt="Nature cover, 10 September 2026: Taming Turbulence" width="200" height="265">
+        <span><b>Nature</b>2026 · HydroGym</span>
+      </a>
+      <a class="cover" href="https://doi.org/10.1038/s42256-023-00744-z">
+        <img src="img/cover_nmi23.jpg" alt="Nature Machine Intelligence cover, 2023" width="200" height="265">
+        <span><b>Nature Machine Intelligence</b>2023 · Causal structure learning</span>
+      </a>
+      <a class="cover" href="https://doi.org/10.1038/s42256-021-00369-0">
+        <img src="img/cover_nmi21.jpg" alt="Nature Machine Intelligence cover, 2021" width="200" height="265">
+        <span><b>Nature Machine Intelligence</b>2021 · RAFT-PIV</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESEARCH ============ -->
+<section id="research">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Research</p>
+      <h2>Three questions behind everything I do</h2>
+      <p class="lede">The common thread is structure: symmetries, conservation laws, sparsity and causal structure make learned models reliable where more data and bigger networks do not.</p>
+    </div>
+    <div class="thrusts">
+      <div class="thrust">
+        <p class="tag">IDENTIFY</p>
+        <h3>What can we reliably learn from sparse, noisy data?</h3>
+        <p>Measurements are scarce and noisy, and in medicine a patient may be seen only once. I develop methods that learn dynamics from such data and say what the data can and cannot determine. The same mathematics describes a wake behind a wing and the progression of ALS.</p>
+        <ul>
+          <li><span>Latent dynamics (LaDID)</span><span>ICLR 2024</span></li>
+          <li><span>Causal structure (D²CL)</span><span>NMI 2023</span></li>
+          <li><span>CADENCE</span><span>under review</span></li>
+        </ul>
+      </div>
+      <div class="thrust">
+        <p class="tag">CONTROL</p>
+        <h3>Can a learned controller be readable and safe?</h3>
+        <p>Reinforcement learning finds strategies no engineer would design, but they are hard to trust. I build agents that learn from fewer trials and stay small enough to read. The next step is controllers that come with stability guarantees, so an engineer can sign off on them.</p>
+        <ul>
+          <li><span>HydroGym</span><span>Nature 2026</span></li>
+          <li><span>SINDy-RL</span><span>Nat. Commun. 2025</span></li>
+          <li><span>Transonic buffet</span><span>Nat. Commun. 2024</span></li>
+        </ul>
+      </div>
+      <div class="thrust">
+        <p class="tag">GENERALIZE</p>
+        <h3>Can one model work on systems it has never seen?</h3>
+        <p>A model trained in simulation is only useful if it holds up on the real system. A network trained only on simulations measures wall-shear stress in real experiments, and HydroGym agents transfer to an unseen wing. Next: physics foundation models that flag their own errors.</p>
+        <ul>
+          <li><span>Simulation to experiment</span><span>JFM 2025</span></li>
+          <li><span>Zero-shot transfer</span><span>Nature 2026</span></li>
+          <li><span>Neural conditional simulation</span><span>under review</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ HYDROGYM ============ -->
+<section id="hydrogym">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Featured result · Nature 2026</p>
+      <h2>HydroGym: an open benchmark where reinforcement learning agents learn to control fluid flows</h2>
+    </div>
+    <div class="feature">
+      <div class="player" data-yt="SQrPBk6f0GY">
+        <button type="button" aria-label="Play video: HydroGym, a reinforcement learning platform for fluid dynamics (Steve Brunton)">
+          <img src="img/yt_SQrPBk6f0GY.jpg" alt="" loading="lazy">
+          <span class="play">Watch · Steve Brunton explains HydroGym</span>
+        </button>
+      </div>
+      <div class="text">
+        <p>Reinforcement learning has mastered games and robots, but fluid flows were out of reach: every trial is an expensive simulation, and there was no common place to compare methods. I conceived HydroGym to change that and led the team of 21 authors who built it. It is an open platform with more than 60 flow-control environments, from laminar wakes to turbulence at Reynolds numbers up to 4&times;10<sup>5</sup>.</p>
+        <p class="result">Agents trained only on simple flows reduced local skin friction by 38% on a three-dimensional wing they had never seen, at four orders of magnitude lower exploration cost than training on the wing itself.</p>
+        <p class="meta">C. Lagemann et&nbsp;al., <i>Nature</i> 657, 370 (2026), cover article. <a href="https://doi.org/10.1038/s41586-026-10917-6">Read the paper</a> · <a href="https://github.com/dynamicslab/hydrogym">Code</a> · <a href="https://dynamicslab.github.io/hydrogym/">Project site</a></p>
+      </div>
+    </div>
+
+    <div class="envs">
+      <figure class="env"><video class="loop" muted loop playsinline preload="none" poster="media/cylinder.jpg" aria-label="Cylinder wake"><source src="media/cylinder.mp4" type="video/mp4"></video><figcaption>Cylinder wake</figcaption></figure>
+      <figure class="env"><video class="loop" muted loop playsinline preload="none" poster="media/pinball.jpg" aria-label="Fluidic pinball"><source src="media/pinball.mp4" type="video/mp4"></video><figcaption>Fluidic pinball</figcaption></figure>
+      <figure class="env"><video class="loop" muted loop playsinline preload="none" poster="media/cavity.jpg" aria-label="Open cavity"><source src="media/cavity.mp4" type="video/mp4"></video><figcaption>Open cavity</figcaption></figure>
+      <figure class="env"><video class="loop" muted loop playsinline preload="none" poster="media/naca.jpg" aria-label="NACA 0012 airfoil"><source src="media/naca.mp4" type="video/mp4"></video><figcaption>NACA 0012 airfoil</figcaption></figure>
+      <figure class="env"><video class="loop square" muted loop playsinline preload="none" poster="media/kolmogorov.jpg" aria-label="Kolmogorov flow"><source src="media/kolmogorov.mp4" type="video/mp4"></video><figcaption>Kolmogorov flow</figcaption></figure>
+      <figure class="env"><video class="loop" muted loop playsinline preload="none" poster="media/channel.jpg" aria-label="Turbulent channel"><source src="media/channel.mp4" type="video/mp4"></video><figcaption>Turbulent channel</figcaption></figure>
+      <p class="small envs-note">Six of the more than 60 HydroGym environments. Each is a flow simulation that an agent observes and acts on.</p>
+    </div>
+
+    <div class="wing">
+      <figure style="margin:0"><img src="img/wing_render.jpg" alt="Turbulent vortices shed from a NACA 0012 wing section in a HydroGym simulation" loading="lazy"><figcaption class="small mono" style="margin-top:6px">HydroGym simulation, NACA 0012 at 12°, Re = 5×10<sup>4</sup></figcaption></figure>
+      <div>
+        <blockquote>The goal is one agent that has practised on many flows and adapts to a new geometry in minutes rather than weeks.</blockquote>
+        <p class="small">Where HydroGym is heading: a generalist flow-control agent, pretrained across all environments, much like the foundation policies now emerging in robotics.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TWO MORE STORIES ============ -->
+<section id="stories">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Selected projects</p>
+      <h2>From gene networks to airliner wings</h2>
+    </div>
+    <div class="pair">
+      <article class="story">
+        <a class="figframe" href="img/vector_als_overview.jpg" target="_blank" rel="noopener">
+          <img src="img/vector_als_overview.jpg" alt="Overview of the VECTOR-ALS pipeline: genetic, multi-omics, RNA sequencing and clinical report data from the Prize and three patient cohorts pass through data-specific encoders and a fusion layer into a joint causal latent embedding, where ALS subtypes are identified and interventions are interpreted, producing a ranked list of targets that is refined iteratively with stem-cell screening experiments" loading="lazy" width="1258" height="905">
+          <span class="play">View full figure</span>
+        </a>
+        <h3>VECTOR-ALS: causal foundation models to find new treatment targets for ALS</h3>
+        <p>ALS differs from patient to patient, which is one reason drug trials fail. Our consortium combines genetic, epigenetic, transcriptomic and clinical data from about 3,000 patients in one latent representation, finds biologically distinct subtypes, and uses causal AI to identify genes whose perturbation shifts a subtype toward health. The best candidates are then tested in neurons grown from patient stem cells. I am a co-PI and build the multimodal foundation model, trained on JUPITER, Europe's first exascale supercomputer.</p>
+        <p class="meta">Ongoing. One of 20 teams selected for the Longitude Prize on ALS in 2026; led by DZNE with KU Leuven, the University of Edinburgh, the Gladstone Institutes, UCL, the National University of Singapore and Stockholm University.</p>
+      </article>
+      <article class="story">
+        <div class="player" data-yt="7Q8oNNsZGcA">
+          <button type="button" aria-label="Play video: SINDy-RL, presented by Nicholas Zolman">
+            <img src="img/yt_7Q8oNNsZGcA.jpg" alt="" loading="lazy">
+            <span class="play">Watch · Nicholas Zolman on SINDy-RL</span>
+          </button>
+        </div>
+        <h3>SINDy-RL: learn a small model of the physics first, then train the agent on it</h3>
+        <p>Instead of a large neural network, the agent first learns a sparse equation for the dynamics and trains on that. It needs 10 to 100 times fewer interactions with the real system, and the resulting policies are interpretable and smaller than 10&nbsp;kB. My part was the transfer to large-scale flow problems, the code implementation and the HydroGym results.</p>
+        <p class="meta">N. Zolman, C. Lagemann, U. Fasel, J.&nbsp;N. Kutz, S.&nbsp;L. Brunton, <i>Nature Communications</i> 16, 10714 (2025). <a href="https://doi.org/10.1038/s41467-025-65738-4">Paper</a> · <a href="https://github.com/nzolman/sindy-rl">Code</a></p>
+      </article>
+    </div>
+
+    <div class="pair">
+      <article class="story">
+        <a class="figframe" href="img/d2cl_fig2.jpg" target="_blank" rel="noopener">
+          <img src="img/d2cl_fig2.jpg" alt="Diagram of the D2CL architecture: pairs of variables from a data matrix pass through a graph neural network and a convolutional network, which output whether one variable causes the other; trained on known edges, the model infers the rest of the causal graph" loading="lazy" width="1079" height="731">
+          <span class="play">View full figure</span>
+        </a>
+        <h3>D²CL: learning cause and effect across thousands of variables</h3>
+        <p>In biology, a drug target is only useful if changing it changes the disease, so correlations are not enough. D²CL combines convolutional and graph neural networks to learn causal relationships from high-dimensional data and partial prior knowledge. It identified new causal relationships among thousands of variables, tested against simulations with known ground truth and against unseen validation experiments on molecular data.</p>
+        <p class="meta">K. Lagemann, C. Lagemann, B. Taschler, S. Mukherjee, <i>Nature Machine Intelligence</i> 5, 1306 (2023), cover article. <a href="https://doi.org/10.1038/s42256-023-00744-z">Paper</a> · Figure: Fig.&nbsp;2 of the paper, cropped, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+      </article>
+      <article class="story">
+        <div class="player" data-yt="ddomrz1cz_U">
+          <button type="button" aria-label="Play video: mitigating transonic buffet with porous trailing edges, presented by Esther Lagemann">
+            <img src="img/yt_ddomrz1cz_U.jpg" alt="" loading="lazy">
+            <span class="play">Watch · Esther Lagemann on transonic buffet</span>
+          </button>
+        </div>
+        <h3>Taming transonic buffet, the shock oscillation that limits how fast airliners fly</h3>
+        <p>Near the speed of sound, the shock wave on a wing can start to oscillate and shake the aircraft, which caps its cruise speed. In wind-tunnel experiments, porous trailing edges substantially attenuated this buffet and also reduced noise. Pressure sensors could not be built into the porous material, so the pressure field had to come from images: RAFT-PIV, my deep optical-flow network, extracted density gradients from schlieren images at every pixel, and together with the measured velocity fields and the conservation equations they gave the full pressure field.</p>
+        <p class="meta">E. Lagemann, S.&nbsp;L. Brunton, W. Schröder, C. Lagemann, <i>Nature Communications</i> 15, 5020 (2024). <a href="https://doi.org/10.1038/s41467-024-49361-3">Paper</a></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="wrap">
+    <div class="about">
+      <figure class="portrait-fig">
+        <img class="portrait" src="img/portrait.jpg" alt="Christian Lagemann at a waterfall in the Pacific Northwest" width="640" height="800" loading="lazy">
+      </figure>
+      <div>
+        <p class="eyebrow" style="margin-bottom:14px">About</p>
+        <div class="prose">
+          <p>I am a mechanical engineer by training and the first in my family to go to a research university. My PhD at RWTH Aachen started with a measurement problem: in particle-image velocimetry, you seed a flow with tiny particles, illuminate them with a laser sheet and try to recover the velocity field from two photographs. The standard method averages over small windows and blurs the finest structures, which were the ones I cared about. So I trained a recurrent neural network to do it instead. That network, RAFT-PIV, became a <i>Nature Machine Intelligence</i> cover, and I have worked at the meeting point of machine learning and physics ever since.</p>
+          <p>The question has grown since then. If a network can learn to see a flow, can it learn to control one, and when should we trust it to? I took that question to Seattle with my own fellowships, to the AI Institute in Dynamic Systems at the University of Washington, where HydroGym took shape. Today, at the German Center for Neurodegenerative Diseases in Bonn, I apply the same ideas to a very different system: how ALS progresses in patients who are often seen only once.</p>
+          <p>What I enjoy most is the moment a student sees an equation come alive in a live simulation. I try to create that moment in every course I teach.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="path" aria-label="Career path">
+      <div class="stop">
+        <span class="logo"><img src="img/logos/rwth.svg" alt="" width="125" height="34"></span>
+        <span class="yrs">2018 – 2022</span>
+        <b>RWTH Aachen University</b>
+        <span class="role">PhD (Dr.-Ing.) 2022, <i>summa cum laude</i></span>
+        <span class="focus">Deep learning based optical flow for experimental fluid mechanics</span>
+      </div>
+      <div class="stop">
+        <span class="logo"><img src="img/logos/rwth.svg" alt="" width="125" height="34"></span>
+        <span class="yrs">2022 – 2023</span>
+        <b>RWTH Aachen University</b>
+        <span class="role">Group leader for machine learning; habilitation 2023</span>
+        <span class="focus">Representation learning for dynamical systems; causal learning in high dimensions</span>
+      </div>
+      <div class="stop">
+        <span class="logo"><img class="uw" src="img/logos/uw.svg" alt="" width="204" height="44"></span>
+        <span class="yrs">2023 – 2025</span>
+        <b>University of Washington, Seattle</b>
+        <span class="role">Group leader, AI Institute in Dynamic Systems</span>
+        <span class="focus">Sample-efficient and robust reinforcement learning for dynamical systems</span>
+      </div>
+      <div class="stop now">
+        <span class="logo"><img class="dzne" src="img/logos/dzne.png" alt="German Center for Neurodegenerative Diseases within the Helmholtz Association" width="104" height="50"></span>
+        <span class="yrs">since 2025</span>
+        <b>DZNE, Bonn</b>
+        <span class="role">Senior researcher; lead of High-Performance AI Computing</span>
+        <span class="focus">Foundation models that predict how complex diseases progress over time</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAPERS ============ -->
+<section id="papers">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Selected papers</p>
+      <h2>Seven papers that show the line of work</h2>
+      <p class="small">Full list on <a href="https://scholar.google.com/citations?user=6BgfQAgAAAAJ">Google Scholar</a>.</p>
+    </div>
+    <ol class="papers">
+      <li class="paper"><span class="yr">2026</span><span class="t"><a href="https://doi.org/10.1038/s41586-026-10917-6">The HydroGym reinforcement learning platform for fluid dynamics</a><span class="v"><b>C. Lagemann</b> et&nbsp;al. (21 authors) · <i>Nature</i></span></span><span class="badge">Cover</span></li>
+      <li class="paper"><span class="yr">2025</span><span class="t"><a href="https://doi.org/10.1038/s41467-025-65738-4">SINDy-RL: interpretable and efficient model-based reinforcement learning</a><span class="v">N. Zolman, <b>C. Lagemann</b>, U. Fasel, J.&nbsp;N. Kutz, S.&nbsp;L. Brunton · <i>Nature Communications</i></span></span><span></span></li>
+      <li class="paper"><span class="yr">2025</span><span class="t"><a href="https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/abs/deep-learning-approach-to-wallshear-stress-quantification-from-numerical-training-to-zeroshot-experimental-application/0CD71FDC0BBC55C159CB6161A630DE73">A deep learning approach to wall-shear stress quantification: from numerical training to zero-shot experimental application</a><span class="v">E. Lagemann, J. Roeb, S.&nbsp;L. Brunton, <b>C. Lagemann</b> · <i>Journal of Fluid Mechanics</i></span></span><span></span></li>
+      <li class="paper"><span class="yr">2024</span><span class="t"><a href="https://doi.org/10.1038/s41467-024-49361-3">Towards extending the aircraft flight envelope by mitigating transonic airfoil buffet</a><span class="v">E. Lagemann, S.&nbsp;L. Brunton, W. Schröder, <b>C. Lagemann</b> · <i>Nature Communications</i></span></span><span></span></li>
+      <li class="paper"><span class="yr">2024</span><span class="t"><a href="https://proceedings.iclr.cc/paper_files/paper/2024/file/a8c089ceb6c4653c3244596e26e9dea2-Paper-Conference.pdf">Invariance-based learning of latent dynamics</a><span class="v">K. Lagemann*, <b>C. Lagemann</b>*, S. Mukherjee · <i>ICLR</i> · *equal contribution</span></span><span></span></li>
+      <li class="paper"><span class="yr">2023</span><span class="t"><a href="https://doi.org/10.1038/s42256-023-00744-z">Deep learning of causal structures in high dimensions under data limitations</a><span class="v">K. Lagemann, <b>C. Lagemann</b>, B. Taschler, S. Mukherjee · <i>Nature Machine Intelligence</i></span></span><span class="badge">Cover</span></li>
+      <li class="paper"><span class="yr">2021</span><span class="t"><a href="https://doi.org/10.1038/s42256-021-00369-0">Deep recurrent optical flow learning for particle image velocimetry data</a><span class="v"><b>C. Lagemann</b> et&nbsp;al. · <i>Nature Machine Intelligence</i></span></span><span class="badge">Cover</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ TEACHING & CODE ============ -->
+<section id="teaching">
+  <div class="wrap">
+    <div class="two">
+      <div>
+        <p class="eyebrow">Teaching &amp; mentoring</p>
+        <h2 style="font-size:clamp(28px,3.4vw,36px);line-height:1.15;margin-top:12px">Equations you can watch move</h2>
+        <ul class="facts">
+          <li><b>UW, 2024</b><span>Co-lecturer with Steve Brunton for ME564 Mechanical Engineering Analysis, about 150 students</span></li>
+          <li><b>RWTH, 2018–23</b><span>Fluid Mechanics I &amp; II for more than 1,000 students a year; built the complete online version of the course during the pandemic and moved it from memorizing equations toward understanding, with live Python demonstrations</span></li>
+          <li><b>Mentoring</b><span>Co-advising four PhD students at the University of Washington; supervised one PhD student and eleven theses at RWTH</span></li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Open source</p>
+        <h2 style="font-size:clamp(28px,3.4vw,36px);line-height:1.15;margin-top:12px">Code that others build on</h2>
+        <ul class="code">
+          <li><a href="https://github.com/dynamicslab/hydrogym"><span><b>HydroGym</b><br><span>Reinforcement learning environments for fluid dynamics</span></span><i>Python</i></a></li>
+          <li><a href="https://github.com/nzolman/sindy-rl"><span><b>SINDy-RL</b><br><span>Sparse dictionary models for sample-efficient RL</span></span><i>Python</i></a></li>
+          <li><a href="https://github.com/cl126162/WSSflow"><span><b>WSSflow</b><br><span>Wall-shear stress from flow measurements</span></span><i>Python</i></a></li>
+          <li><a href="https://github.com/cl126162/DeepWSS-Quant"><span><b>DeepWSS-Quant</b><br><span>Deep learning wall-shear stress quantification</span></span><i>Python</i></a></li>
+          <li><a href="https://codeocean.com/capsule/7226151/tree/v1"><span><b>RAFT-PIV</b><br><span>Recurrent optical flow for particle-image velocimetry</span></span><i>Code Ocean</i></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <p class="eyebrow">Contact</p>
+    <h2>I would be glad to hear from you.</h2>
+    <a class="mail js-mail" href="#contact">Email me</a>
+    <div class="row">
+      <a href="https://scholar.google.com/citations?user=6BgfQAgAAAAJ">Google Scholar</a>
+      <a href="https://github.com/cl126162">GitHub</a>
+      <a href="https://github.com/dynamicslab/hydrogym">HydroGym on GitHub</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Christian Lagemann</span>
+    <span>Flow animations from <a href="https://dynamicslab.github.io/hydrogym/">HydroGym</a> · Videos on Steve Brunton's YouTube channel</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Click-to-play YouTube: the iframe loads only after a click (fast page, no tracking before that).
+  document.querySelectorAll('.player[data-yt]').forEach(function (p) {
+    var btn = p.querySelector('button');
+    btn.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + p.dataset.yt + '?autoplay=1&rel=0';
+      f.title = btn.getAttribute('aria-label').replace('Play video: ', '');
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      p.replaceChildren(f);
+    });
+  });
+
+  // Flow loops play only while on screen, and not at all with reduced motion (posters stay).
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var loops = document.querySelectorAll('video.loop');
+  if (!still && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { var r = v.play(); if (r && r.catch) r.catch(function () {}); }
+        else v.pause();
+      });
+    }, { rootMargin: '120px' });
+    loops.forEach(function (v) { io.observe(v); });
+  }
+
+  // Email address is assembled here, not written in the HTML, to keep it away from scrapers.
+  var addr = ['christian.lagemann92', 'gmail.com'].join('@');
+  document.querySelectorAll('a.js-mail').forEach(function (a) { a.href = 'mailto:' + addr; });
+
+  // Hairline under the top bar once the page scrolls.
+  var top = document.getElementById('top');
+  var onScroll = function () { top.classList.toggle('scrolled', window.scrollY > 8); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
